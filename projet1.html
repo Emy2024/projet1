@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projet 1 &#65372; Accidents corporels en Haute-Garonne en 2022</title>
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="projet1css/2024-10-01_carteEtgraphiqueCyclo.css">
+    <script type="module" src="projet1js/2024-10-01_carteEtgraphiqueAccidentsMinifier.js" defer></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+	<link rel="stylesheet" href="https://rawgit.com/k4r573n/leaflet-control-osm-geocoder/master/Control.OSMGeocoder.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head> 
+<body>
+    <main>
+
+        <button onclick="togglePopup()" class="togglePopup corner-ribbon top-right blue">Projet #1</button>
+        <div class="popupMainPageOverlay">
+            <div class="popupMainPage">
+                <div class="textPopup">
+                    <h2>Utilisation des données</h2>
+                    <p>Les données présentées sur cette page sont issues des Bulletins d’Analyse des Accidents Corporels de la Circulation (BAAC) (<a href="https://www.data.gouv.fr/fr/datasets/bases-de-donnees-annuelles-des-accidents-corporels-de-la-circulation-routiere-annees-de-2005-a-2022/">source</a>) relevés par les forces de l’ordre. Il s’agit d’une base brute non corrigée des erreurs de saisies qui font l’objet d’un processus de corrections ultérieurement.
+                    <br> 
+                    Seule l'année 2022 a été prise en compte dans la présente analyse. Les jeux de données exploités sont les suivants : 
+                    <br><br>   
+                    </p>
+                    <ul>
+                        <li>caracteristiques-2022.csv</li>
+                        <li>vehicules-2022.csv</li>
+                        <li>lieux-2022.csv</li>
+                        <li>usagers-2022.csv</li>
+                    </ul>
+                    <a onclick="togglePopup()" class="popupFermer" href="#">Fermer</a>
+                </div>
+            </div>
+        </div>
+    
+    <div class="container1">
+        <h1 class="elementNomCommunes">Panorama des accidents corporels en Haute-Garonne en 2022</h1>
+            <p class="sourceINSEE">Source : Bulletins d’Analyse des Accidents Corporels de la Circulation (BAAC) (<a href="https://www.data.gouv.fr/fr/datasets/bases-de-donnees-annuelles-des-accidents-corporels-de-la-circulation-routiere-annees-de-2005-a-2022/">source</a>)
+            </p>
+            <blockquote><p>"Pour chaque accident corporel (soit un accident survenu sur une voie ouverte à la circulation publique, impliquant au moins un véhicule et ayant fait au moins une victime ayant nécessité des soins), des saisies d’information décrivant l’accident sont effectuées par l’unité des forces de l’ordre (police,
+            gendarmerie, etc.) qui est intervenue sur le lieu de l’accident"  - Extrait de la description issue de la documentation du fichier <a href="https://www.data.gouv.fr/fr/datasets/bases-de-donnees-annuelles-des-accidents-corporels-de-la-circulation-routiere-annees-de-2005-a-2022/">BAAC</a></p></blockquote>
+    </div>
+
+
+    <div>
+        <div class="container2">
+            <div class="container2Gauche">
+                <h2>Localisation des véhicules impliqués dans des accidents corporels en 2022</h2>
+                    <fieldset class="legendeMapAccidents">
+                        <h4>Catégories de véhicules les plus  <br> impliqués dans des accidents : </h4>
+                        <div>
+                            <input type="checkbox" id="voituresCheckbox" name="voituresCheckbox" checked>
+                            <label for="voituresCheckbox">Voitures</label>
+                        </div>
+
+                        <div>
+                            <input type="checkbox" id="cyclomoteursScooterCheckbox" name="cyclomoteursScooterCheckbox">
+                            <label for="cyclomoteursScooterCheckbox">Motos et scooters</label>
+                            <div class="fa fa-question-circle infobulle" aria-label="Motos et scooters : cyclomoteurs, scooters et motocyclettes toutes catégories"></div>
+                        </div>
+
+                        <div>
+                            <input type="checkbox" id="vehiculesUtilitairesCheckbox" name="vehiculesUtilitairesCheckbox">
+                            <label for="vehiculesUtilitairesCheckbox">Véhicules utilitaires</label>
+                        </div>
+
+                        <div>
+                            <input type="checkbox" id="veloCheckbox" name="veloCheckbox">
+                            <label for="veloCheckbox">Vélos</label>
+                        </div>
+
+                        
+                        <div>
+                            <input type="checkbox" id="EDPCheckbox" name="EDPCheckbox">
+                            <label for="EDPCheckbox">Engins de déplacement personnels</label>
+                            <div class="fa fa-question-circle infobulle" aria-label="Engins de déplacement personnels : engins motorisés (skateboard, patins à roulettes, trottinette) et non motorisés électriquement (patrouilleur, trottinette électrique, gyropode, gyroskate, gyroroue)"></div>
+
+                        </div>
+                    </fieldset>
+                <div id="mapAccidents">
+                </div>
+            </div> 
+            
+            <div class="container2Droite">
+                <h2>Principales données sur les accidents corporels en 2022</h2>
+                <div class="donneesContainer">
+                    <div class="donneesTitreetChiffre">
+                        <div class="donneesTitre">Nombre total d'accidents 
+                            <div class="donneesTitreNombreTotalAccidents">
+                                <div class="donneesChiffreesNombreTotalAccidents" id="elementIdTotalAccident"></div>  
+                                <div class="fa fa-question-circle infobulleNbreAccidents" aria-label="2021 : 668 accidents"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="donneesTitreetChiffre">
+                        <div class="donneesTitre">Nombre total de véhicules impliqués
+                            <div class="donneesChiffre" id="elementIdVehiculesImpliques"></div> 
+                        </div>
+                    </div>
+
+                    <div class="donneesTitreetChiffre">
+                        <div class="donneesTitre">Nombre de personnes impliquées
+                            <div class="donneesChiffre" id="elementIdPersonnesImpliquees"></div> 
+                        </div>
+                    </div>
+
+                    <div class="donneesTitreetChiffre">
+                        <div class="donneesTitre">Nombre de personnes décédées
+                            <div class="donneesChiffre" id="elementIdDeces"></div> 
+                        </div>
+                    </div>
+
+                </div>
+                
+
+                <h2>Types de véhicules les plus impliqués dans un accident corporel</h2>
+                <p> Lecture du graphique : en 2022 en Haute-Garonne, parmi les 1028 véhicules impliqués dans des accidents corporels, 63% concernaient des voitures.</p> 
+                    <div id="chartParCategorieDeVehicule"></div>
+
+        </div>
+        </div>
+
+
+
+        <div class="container3">        
+            <div class="container3sousContainer">
+                <h2>Gravité des accidents</h2>
+                <p> Lecture du graphique : en 2022 en Haute-Garonne, parmi 1364 personnes concernées par des accidents corporels, 48 sont décédées. </p>
+                    <div class="containerChartParGravite">
+                        <canvas id="chartParGravite"></canvas>
+                    </div>
+            </div>
+           
+
+            <div class="container3sousContainer1">
+                <div>
+                    <h2>Conditions d'éclairage</h2>
+                    <p> Lecture du graphique : en 2022 en Haute-Garonne, près de 64% des accidents corporels ont eu lieu en plein jour.</p>
+                        <canvas id="chartConditionsLum"></canvas>
+                </div>
+
+                <div>
+                    <h2>Conditions atmosphériques</h2>
+                    <p> Lecture du graphique : en 2022 en Haute-Garonne, 83% des accidents corporels ont eu lieu dans des conditions  "normales". </p>
+                        <canvas id="chartConditionsAtmospheriques"></canvas>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="container4">
+            <div>
+            <h2>Motifs de déplacement au moment de l'accident</h2>
+            <div>
+                <p> Lecture du graphique : en 2022 en Haute-Garonne, 529 personnes ont été victimes d'accidents corporels lors de déplacements liés à des loisirs (ballades).
+                <span class="fa fa-question-circle infobulleNbreAccidents" aria-label="312 motifs de déplacements n'ont pas été renseignés et ne sont par conséquent pas présents dans le graphique ci-dessous."></span>
+                </p>
+            </div>
+
+            <div id="chartParTrajet"></div>
+            </div>
+            
+        </div>
+
+    </div>  
+
+
+
+
+
+    </main>
+
+    <footer>
+        <div class="foorterDiv">
+            <p>© Emmanuelle Rey | 2024 | <a href="http://emrey.free.fr/mentionslegales.html">Mentions légales</a></p>
+        </div>
+    </footer>
+
+    <script src="projet1js/2024-10-01_Popup.js" defer></script>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="crossorigin=""></script>
+
+    <!-- Plugin OSM Geocoder  -->
+    <script src="https://rawgit.com/k4r573n/leaflet-control-osm-geocoder/master/Control.OSMGeocoder.js"></script>
+
+    <!--  Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- TreeMap -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+
+</body>
+
+
+</html>
